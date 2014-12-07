@@ -1,0 +1,28 @@
+{
+  "name": "potem",
+  "version": "1.0.0",
+  "description": "Modern very fast, async, promise-like class",
+  "main": "build/commonjs/potem-commonjs.js",
+  "scripts": {
+    "test": "jasmine-node spec/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/finalclass/potem.git"
+  },
+  "keywords": [
+    "async",
+    "promise"
+  ],
+  "author": "Szymon Wygnański <s@finalclass.net> (http://finalclass.net/)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/finalclass/potem/issues"
+  },
+  "homepage": "https://github.com/finalclass/potem",
+  "devDependencies": {
+    "gulp": "^3.8.10",
+    "gulp-tsc": "^0.9.2",
+    "jasmine-node": "^1.14.5"
+  }
+}
