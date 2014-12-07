@@ -30,7 +30,7 @@ class Potem {
       if (typeof fDef.func === 'function') {
         lastResult = fDef.func.apply(this, this.argsStack[this.argsStack.length - 1]);
       } else {
-        lastResult = this.argsStack;
+        lastResult = this.argsStack.sort((a, b) => (<any>a).pauseIndex - (<any>b).pauseIndex)
         for (var i:number = 0; i < fDef.func.length; i += 1) {
           lastResult = fDef.func[i].apply(this, lastResult);
         }
@@ -100,9 +100,11 @@ class Potem {
    //   ********************************************************/
   public pause(n:number = 1):Potem.IResume {
     this.pauseCounter += n;
+    var currentPause = this.pauseCounter;
     return (...args:any[]) => {
       setTimeout(() => {
         this.pauseCounter -= 1;
+        (<any>args).pauseIndex = currentPause;
         this.argsStack.push(args);
         if (this.pauseCounter === 0) {
           this.run();

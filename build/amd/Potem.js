@@ -31,7 +31,7 @@ define(["require", "exports"], function (require, exports) {
                     lastResult = fDef.func.apply(this, this.argsStack[this.argsStack.length - 1]);
                 }
                 else {
-                    lastResult = this.argsStack;
+                    lastResult = this.argsStack.sort(function (a, b) { return a.pauseIndex - b.pauseIndex; });
                     for (var i = 0; i < fDef.func.length; i += 1) {
                         lastResult = fDef.func[i].apply(this, lastResult);
                     }
@@ -97,6 +97,7 @@ define(["require", "exports"], function (require, exports) {
             var _this = this;
             if (n === void 0) { n = 1; }
             this.pauseCounter += n;
+            var currentPause = this.pauseCounter;
             return function () {
                 var args = [];
                 for (var _i = 0; _i < arguments.length; _i++) {
@@ -104,6 +105,7 @@ define(["require", "exports"], function (require, exports) {
                 }
                 setTimeout(function () {
                     _this.pauseCounter -= 1;
+                    args.pauseIndex = currentPause;
                     _this.argsStack.push(args);
                     if (_this.pauseCounter === 0) {
                         _this.run();
