@@ -14,7 +14,7 @@ npm install potem
 ## async usage (read directory content)
 
 ```js
-var Potem = require('Potem')
+var Potem = require('potem')
 var fs = require('fs');
 
 var p = new Potem()
