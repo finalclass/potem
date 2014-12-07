@@ -2,7 +2,7 @@
   "name": "potem",
   "version": "1.0.1",
   "description": "Modern, very fast, lightweight, async, promise-like class",
-  "main": "build/commonjs/potem-commonjs.js",
+  "main": "build/commonjs/Potem.js",
   "scripts": {
     "test": "jasmine-node spec/"
   },
