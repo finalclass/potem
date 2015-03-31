@@ -6,17 +6,15 @@ describe('it-works-great-with-node.spec', function () {
   it('is a good idea for node style callbacks', function (next) {
     var p = new Potem()
       .then(function () {
-        fs.writeFile('tmp.tmp', 'Test', p.pause());
+        fs.writeFile('tmp.tmp', 'Test', p.pause(1, p.throwArg));
       })
-      .then(Potem.throwFirstArgument)
       .then(function () {
         fs.exists('tmp.tmp', p.pause());
       })
       .then(function (exists) {
         expect(exists).toBeTruthy();
-        fs.readFile('tmp.tmp', p.pause());
+        fs.readFile('tmp.tmp', p.pause(1, p.throwArg));
       })
-      .then(Potem.throwFirstArgument)
       .then(function (file) {
         expect(file.toString()).toBe('Test');
       })

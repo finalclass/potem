@@ -6,15 +6,14 @@ describe('it-can-pause-many-times', function () {
   it('it-can-pause-many-times', function (next) {
     var p = new Potem()
       .then(function () {
-        fs.readdir(__dirname, p.pause());
+        fs.readdir(__dirname, p.pause(1, p.throwArg));
       })
-      .then(Potem.throwFirstArgument)
       .then(function (files) {
         for (var i = files.length; i -= 1;) {
-          fs.readFile(__dirname + '/' + files[i], p.pause());
+          fs.readFile(__dirname + '/' + files[i], p.pause(1, p.throwArg));
         }
       })
-      .then([Potem.throwFirstArgumentInArray, function(fileContentsArray) {
+      .then([function(fileContentsArray) {
         expect(fileContentsArray.join('') !== '').toBeTruthy();
       }])
       .fin(function (err) {

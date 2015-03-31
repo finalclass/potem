@@ -4,7 +4,9 @@ declare class Potem {
     private callStack;
     private stackError;
     constructor();
-    static THROW_ARG(): void;
+    throwArg(index: number, args: any[]): number;
+    passArg(index: number, args: any[]): number;
+    skipArg(index: number, args: any[]): number;
     private runFunc(fDef);
     private asyncThrowError();
     private addFunc(func, type?);
@@ -12,7 +14,7 @@ declare class Potem {
     /********************************************************
      //   * Public interface
      //   ********************************************************/
-    pause(n?: number): Potem.IResume;
+    pause(n?: number, ...pauseArgs: any[]): Potem.IResume;
     then(func: Potem.ICallback): Potem;
     error(func: Potem.ICallback): Potem;
     fin(func: Potem.ICallback): Potem;

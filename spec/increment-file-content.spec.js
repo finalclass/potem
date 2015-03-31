@@ -6,16 +6,15 @@ describe('it-increment-file-content.spec', function () {
   it('it-increment-file-content.spec', function (next) {
     var p = new Potem()
       .then(function () {
-        fs.readdir(__dirname, p.pause());
+        fs.readdir(__dirname, p.pause(1, p.throwArg));
       })
-      .then(Potem.throwFirstArgument)
       .then(function (files) {
-        var next = p.pause(files.length);
+        var next = p.pause(files.length, p.throwArg);
         files.forEach(function (file) {
           fs.readFile(__dirname + '/' + file, next);
         });
       })
-      .then([Potem.throwFirstArgumentInArray, function () {
+      .then([function () {
         return Array.prototype.join.call(arguments, '');
       }])
       .then(function (result) {

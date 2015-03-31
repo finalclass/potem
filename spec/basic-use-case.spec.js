@@ -2,7 +2,6 @@ var Potem = require('../build/commonjs/Potem.js');
 
 describe('basic-use-case', function () {
 
-
   it('can pass arguments sync', function () {
     new Potem()
       .then(function () {

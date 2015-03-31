@@ -6,7 +6,19 @@ define(["require", "exports"], function (require, exports) {
             this.callStack = [];
             this.run = this.run.bind(this);
         }
-        Potem.THROW_ARG = function () {
+        Potem.prototype.throwArg = function (index, args) {
+            var arg = args[index];
+            if (arg) {
+                this.stackError = arg;
+            }
+            return this.skipArg(index, args);
+        };
+        Potem.prototype.passArg = function (index, args) {
+            return 0;
+        };
+        Potem.prototype.skipArg = function (index, args) {
+            args.splice(index, 1);
+            return 1;
         };
         Potem.prototype.runFunc = function (fDef) {
             try {
@@ -80,22 +92,30 @@ define(["require", "exports"], function (require, exports) {
         Potem.prototype.pause = function (n) {
             var _this = this;
             if (n === void 0) { n = 1; }
+            var pauseArgs = [];
+            for (var _i = 1; _i < arguments.length; _i++) {
+                pauseArgs[_i - 1] = arguments[_i];
+            }
             this.pauseCounter += n;
             var currentPause = this.pauseCounter;
             return function () {
-                var args = [];
+                var callbackArgs = [];
                 for (var _i = 0; _i < arguments.length; _i++) {
-                    args[_i - 0] = arguments[_i];
+                    callbackArgs[_i - 0] = arguments[_i];
                 }
                 setTimeout(function () {
                     _this.pauseCounter -= 1;
-                    args.pauseIndex = currentPause;
-                    _this.argsStack.push(args);
+                    callbackArgs.pauseIndex = currentPause;
+                    var shift = 0;
+                    pauseArgs.forEach(function (argsConverter, index) {
+                        shift += argsConverter.call(_this, index - shift, callbackArgs);
+                    });
+                    _this.argsStack.push(callbackArgs);
                     if (_this.pauseCounter === 0) {
                         _this.run();
                     }
                 });
-                return args[0];
+                return callbackArgs[0];
             };
         };
         Potem.prototype.then = function (func) {

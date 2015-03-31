@@ -7,14 +7,14 @@ describe('it-can-be-parallel.spec', function () {
   it('is parallel', function (next) {
     var p = new Potem()
       .then(function () {
-        fs.writeFile('tmp.tmp', 'a', p.pause());
-        fs.writeFile('tmp2.tmp', 'b', p.pause());
+        fs.writeFile('tmp.tmp', 'a', p.pause(1, p.throwArg));
+        fs.writeFile('tmp2.tmp', 'b', p.pause(1, p.throwArg));
       })
-      .then([Potem.throwFirstArgumentInArray, function (write1, write2) {
-        fs.readFile('tmp.tmp', p.pause());
-        fs.readFile('tmp2.tmp', p.pause());
+      .then([function (write1, write2) {
+        fs.readFile('tmp.tmp', p.pause(1, p.throwArg));
+        fs.readFile('tmp2.tmp', p.pause(1, p.throwArg));
       }])
-      .then([Potem.throwFirstArgumentInArray, function (read1, read2) {
+      .then([function (read1, read2) {
         return read1 + read2;
       }])
       .then(function (concatenation) {

@@ -8,7 +8,22 @@ class Potem {
     this.run = this.run.bind(this);
   }
 
-  public static THROW_ARG():void {}
+  public throwArg(index:number, args:any[]):number {
+    var arg = args[index];
+    if (arg) {
+      this.stackError = arg;
+    }
+    return this.skipArg(index, args);
+  }
+
+  public passArg(index:number, args:any[]):number {
+    return 0;
+  }
+
+  public skipArg(index:number, args:any[]):number {
+    args.splice(index, 1);
+    return 1;
+  }
 
   private runFunc(fDef:Potem.IFunctionDefinition):void {
     try {
@@ -84,19 +99,23 @@ class Potem {
   /********************************************************
    //   * Public interface
    //   ********************************************************/
-  public pause(n:number = 1):Potem.IResume {
+  public pause(n:number = 1, ...pauseArgs:any[]):Potem.IResume {
     this.pauseCounter += n;
     var currentPause = this.pauseCounter;
-    return (...args:any[]) => {
+    return (...callbackArgs:any[]) => {
       setTimeout(() => {
         this.pauseCounter -= 1;
-        (<any>args).pauseIndex = currentPause;
-        this.argsStack.push(args);
+        (<any>callbackArgs).pauseIndex = currentPause;
+        var shift = 0;
+        pauseArgs.forEach((argsConverter:(index:number, shift:number, args:any[])=>number, index:number) => {
+          shift += argsConverter.call(this, index - shift, callbackArgs);
+        });
+        this.argsStack.push(callbackArgs);
         if (this.pauseCounter === 0) {
           this.run();
         }
       });
-      return args[0];
+      return callbackArgs[0];
     }
   }
 
