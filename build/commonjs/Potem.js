@@ -5,23 +5,7 @@ var Potem = (function () {
         this.callStack = [];
         this.run = this.run.bind(this);
     }
-    Potem.throwFirstArgument = function () {
-        if (arguments[0]) {
-            throw arguments[0];
-        }
-        return arguments[1];
-    };
-    Potem.throwFirstArgumentInArray = function () {
-        var args = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-            args[_i - 0] = arguments[_i];
-        }
-        return args.map(function (args) {
-            if (args[0]) {
-                throw args[0];
-            }
-            return args.slice(1);
-        });
+    Potem.THROW_ARG = function () {
     };
     Potem.prototype.runFunc = function (fDef) {
         try {

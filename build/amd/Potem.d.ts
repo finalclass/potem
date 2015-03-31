@@ -4,8 +4,7 @@ declare class Potem {
     private callStack;
     private stackError;
     constructor();
-    static throwFirstArgument(): any;
-    static throwFirstArgumentInArray(...args: any[][]): any;
+    static THROW_ARG(): void;
     private runFunc(fDef);
     private asyncThrowError();
     private addFunc(func, type?);

@@ -8,21 +8,7 @@ class Potem {
     this.run = this.run.bind(this);
   }
 
-  public static throwFirstArgument():any {
-    if (arguments[0]) {
-      throw arguments[0];
-    }
-    return arguments[1];
-  }
-
-  public static throwFirstArgumentInArray(...args:any[][]):any {
-    return args.map((args:any[]) => {
-      if (args[0]) {
-        throw args[0];
-      }
-      return args.slice(1);
-    });
-  }
+  public static THROW_ARG():void {}
 
   private runFunc(fDef:Potem.IFunctionDefinition):void {
     try {
