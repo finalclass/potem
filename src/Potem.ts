@@ -22,7 +22,7 @@ export interface IPotem {
     passArg(index: number, args: any[]): number;
     skipArg(index: number, args: any[]): number;
     pause(n?: number, ...pauseArgs: any[]): IResume;
-    stdPause(n?:numer): IResume;
+    stdPause(n?:number): IResume;
     then(func: ICallback): IPotem;
     error(func: ICallback): IPotem;
     fin(func: ICallback): IPotem;
@@ -152,7 +152,7 @@ export module potemPublicPrototype {
       }
     }
 
-    export function stdPause(n?:number = 1):IResume {
+    export function stdPause(n:number = 1):IResume {
         return this.pause(n, this.throwArg);
     }
 

@@ -16,9 +16,9 @@ export interface IPotem {
     (func: ICallback): IPotem;
     throwArg(index: number, args: any[]): number;
     passArg(index: number, args: any[]): number;
-    stdPause(): IResume;
     skipArg(index: number, args: any[]): number;
     pause(n?: number, ...pauseArgs: any[]): IResume;
+    stdPause(n?: number): IResume;
     then(func: ICallback): IPotem;
     error(func: ICallback): IPotem;
     fin(func: ICallback): IPotem;
@@ -29,7 +29,7 @@ export declare module potemPublicPrototype {
     function passArg(index: number, args: any[]): number;
     function skipArg(index: number, args: any[]): number;
     function pause(n?: number, ...pauseArgs: any[]): IResume;
-    function stdPause(n?: number): any;
+    function stdPause(n?: number): IResume;
     function then(func: ICallback): IPotem;
     function error(func: ICallback): IPotem;
     function fin(func: ICallback): IPotem;
