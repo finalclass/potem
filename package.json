@@ -1,6 +1,6 @@
 {
   "name": "potem",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Modern, very fast, lightweight, async, promise-like class",
   "main": "build/commonjs/Potem.js",
   "scripts": {
