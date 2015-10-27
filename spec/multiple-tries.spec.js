@@ -1,12 +1,12 @@
-var Potem = require('../build/commonjs/Potem.js');
+var potem = require('../build/commonjs/potem').potem;
 var fs = require('fs');
 
 describe('multiplie tries', function () {
 
   it('can merge tries sync', function (next) {
-    var p = new Potem()
+    var p = potem()
       .then(function () {
-        return new Potem()
+        return potem()
           .then(function () {
             return 'works';
           });
@@ -21,9 +21,9 @@ describe('multiplie tries', function () {
   });
 
   it('can merge tries async', function (next) {
-    var p1 = new Potem()
+    var p1 = potem()
       .then(function () {
-        return p2 = new Potem()
+        return p2 = potem()
           .then(function () {
             var resume = p2.pause();
             setTimeout(function () {
@@ -40,9 +40,9 @@ describe('multiplie tries', function () {
   });
 
   it('can merge by return statement', function (next) {
-    var p1 = new Potem()
+    var p1 = potem()
       .then(function () {
-        return p2 = new Potem()
+        return p2 = potem()
           .then(function () {
             var resume = p2.pause();
             setTimeout(function () {
@@ -57,9 +57,9 @@ describe('multiplie tries', function () {
   });
 
   it('can merge by return in real life situation', function (next) {
-    var p1 = new Potem()
+    var p1 = potem()
       .then(function () {
-        return p2 = new Potem()
+        return p2 = potem()
           .then(function () {
             fs.writeFile('tmp.tmp', 'ABC', p2.pause());
           })

@@ -1,4 +1,4 @@
-var Potem = require('../build/commonjs/Potem.js');
+var potem = require('../build/commonjs/potem').potem;
 
 describe('it-can-catch.spec', function () {
 
@@ -10,7 +10,7 @@ describe('it-can-catch.spec', function () {
     };
     var noop = jasmine.createSpy('noop');
 
-    new Potem()
+    potem()
       .then(noop)
       .then(noop)
       .then(noop)

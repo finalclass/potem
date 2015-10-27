@@ -1,9 +1,9 @@
-var Potem = require('../build/commonjs/Potem.js');
+var potem = require('../build/commonjs/potem').potem;
 
 describe('basic-use-case', function () {
 
   it('can pass arguments sync', function () {
-    new Potem()
+    potem()
       .then(function () {
         return 'test';
       })
@@ -13,7 +13,7 @@ describe('basic-use-case', function () {
   });
 
   it('can pass arguments async', function (next) {
-    var p = new Potem()
+    var p = potem()
       .then(function () {
         var resume = p.pause();
         setTimeout(function () {

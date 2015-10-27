@@ -1,9 +1,9 @@
-var Potem = require('../build/commonjs/Potem.js');
+var potem = require('../build/commonjs/potem').potem;
 
 describe('it-executes-in-sequence', function () {
 
   it('is sync', function (next) {
-    var p = new Potem()
+    var p = potem()
       .then(function () {
         return 'a';
       })

@@ -1,9 +1,9 @@
-var Potem = require('../build/commonjs/Potem.js');
+var potem = require('../build/commonjs/potem').potem;
 
 describe('throw-first-argument-in-array.spec', function () {
 
   it('can catch many', function (next) {
-    var p = new Potem()
+    var p = potem()
       .then(function () {
         var resume1 = p.pause(1, p.throwArg);
         var resume2 = p.pause(1, p.throwArg);

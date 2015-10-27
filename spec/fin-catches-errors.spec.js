@@ -1,9 +1,9 @@
-var Potem = require('../build/commonjs/Potem.js');
+var potem = require('../build/commonjs/potem').potem;
 
 describe('fin-catches-errors.spec', function () {
 
   it('uses fin to catch errors', function (next) {
-    new Potem()
+    potem()
       .then(function () {
         throw new Error('abc');
       })

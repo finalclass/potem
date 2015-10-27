@@ -1,34 +1,36 @@
-declare class Potem {
-    private pauseCounter;
-    private argsStack;
-    private callStack;
-    private stackError;
-    constructor();
+export interface ICallback {
+    (...args: any[]): any;
+}
+export interface IResume {
+    (...args: any[]): void;
+}
+export interface IFunctionDefinition {
+    func: any;
+    type: string;
+}
+export interface IPotem {
+    pauseCounter: number;
+    argsStack: any[][];
+    callStack: IFunctionDefinition[];
+    stackError: any;
+    (func: ICallback): IPotem;
     throwArg(index: number, args: any[]): number;
     passArg(index: number, args: any[]): number;
+    stdPause(): IResume;
     skipArg(index: number, args: any[]): number;
-    private runFunc(fDef);
-    private asyncThrowError();
-    private addFunc(func, type?);
-    private run();
-    /********************************************************
-     //   * Public interface
-     //   ********************************************************/
-    pause(n?: number, ...pauseArgs: any[]): Potem.IResume;
-    then(func: Potem.ICallback): Potem;
-    error(func: Potem.ICallback): Potem;
-    fin(func: Potem.ICallback): Potem;
+    pause(n?: number, ...pauseArgs: any[]): IResume;
+    then(func: ICallback): IPotem;
+    error(func: ICallback): IPotem;
+    fin(func: ICallback): IPotem;
 }
-declare module Potem {
-    interface ICallback {
-        (...args: any[]): any;
-    }
-    interface IResume {
-        (...args: any[]): void;
-    }
-    interface IFunctionDefinition {
-        func: any;
-        type: string;
-    }
+export declare function potem(func?: ICallback): IPotem;
+export declare module potemPublicPrototype {
+    function throwArg(index: number, args: any[]): number;
+    function passArg(index: number, args: any[]): number;
+    function skipArg(index: number, args: any[]): number;
+    function pause(n?: number, ...pauseArgs: any[]): IResume;
+    function stdPause(n?: number): any;
+    function then(func: ICallback): IPotem;
+    function error(func: ICallback): IPotem;
+    function fin(func: ICallback): IPotem;
 }
-export = Potem;

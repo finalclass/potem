@@ -1,4 +1,4 @@
-var Potem = require('../build/commonjs/Potem.js');
+var potem = require('../build/commonjs/potem').potem;
 
 describe('multi-catch-and-finally', function () {
 
@@ -6,7 +6,7 @@ describe('multi-catch-and-finally', function () {
     var spy1 = jasmine.createSpy();
     var spy2 = jasmine.createSpy();
 
-    new Potem()
+    potem()
       .then(function () {
 
       })
@@ -24,7 +24,7 @@ describe('multi-catch-and-finally', function () {
     var spy1 = jasmine.createSpy();
     var spy2 = jasmine.createSpy();
 
-    new Potem()
+    potem()
       .then(function () {
         throw new Error();
       })
@@ -44,4 +44,3 @@ describe('multi-catch-and-finally', function () {
   });
 
 });
-

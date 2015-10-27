@@ -1,4 +1,4 @@
-var Potem = require('../build/commonjs/Potem.js');
+var potem = require('../build/commonjs/potem').potem;
 
 describe('resume-is-sorted', function () {
 
@@ -10,7 +10,7 @@ describe('resume-is-sorted', function () {
     }
 
 
-    var p = new Potem()
+    var p = potem()
       .then(function () {
         delay('a', p.pause(), 30);
         delay('b', p.pause(), 20);

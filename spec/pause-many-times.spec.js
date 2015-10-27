@@ -1,10 +1,10 @@
-var Potem = require('../build/commonjs/Potem.js');
+var potem = require('../build/commonjs/potem').potem;
 var fs = require('fs');
 
 describe('it-can-pause-many-times', function () {
 
   it('it-can-pause-many-times', function (next) {
-    var p = new Potem()
+    var p = potem()
       .then(function () {
         fs.readdir(__dirname, p.pause(1, p.throwArg));
       })

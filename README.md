@@ -5,9 +5,12 @@ Potem
 
 Learn from the examples:) You can find many of them in the `spec/` directory.
 
-## Version 2
+## Version 3
 
-Version 2 is not compatible with version 1.x.
+Version 3 is not compatible with version 1.x nor with 2.x.
+Potem class has been converted to "potem" function.
+Now you are able to `then` functions without "then" keyword because `potem` function
+returns itself.
 
 ## install
 
@@ -18,34 +21,33 @@ npm install potem
 ## sync usage
 
 ```js
-var Potem = require('potem');
+var potem = require('potem').potem;
 var result = 0;
 
-new Potem()
-    .then(function () {
-        return 1;
-    })
-    .then(function (n) {
-        return n + 1;
-    })
-    .then(function (n) {
-        return n * 2;
-    })
-    .then(function (n) {
-        result = n;
-    })
-    .fin(function (n) {
-        expect(result).toBe(4);
-    });
+potem(function () {
+    return 1;
+})
+(function (n) {
+    return n + 1;
+})
+(function (n) {
+    return n * 2;
+})
+(function (n) {
+    result = n;
+})
+.fin(function (n) {
+    expect(result).toBe(4);
+});
 ```
 
 ## Basic async example
 
 ```js
-var Potem = require('potem')
+var potem = require('potem').potem
 var fs = require('fs');
 
-var p = new Potem()
+var p = potem()
     .then(function () {
         //p.pause() method returns a "resume" callback and pauses current execution.
         fs.readdir('./spec', p.pause());
@@ -62,10 +64,10 @@ var p = new Potem()
 ## Basic async example using argument converters
 
 ```js
-var Potem = require('potem')
+var potem = require('potem').potem;
 var fs = require('fs');
 
-var p = new Potem()
+var p = potem()
     .then(function () {
         //p.pause() method returns a "resume" callback and pauses current execution.
         fs.readdir('./spec', p.pause(1, throwArg));
@@ -81,10 +83,10 @@ var p = new Potem()
 ## async usage (read directory content)
 
 ```js
-var Potem = require('potem')
+var potem = require('potem').potem;
 var fs = require('fs');
 
-var p = new Potem()
+var p = potem
     .then(function () {
         //p.pause() method returns a "resume" callback and pauses current execution.
         fs.readdir('./spec', p.pause());
@@ -126,10 +128,10 @@ In this case (if array of callbacks are arguments) every callback will be called
 for example:
 
 ```js
-var Potem = require('potem')
+var potem = require('potem').potem;
 var fs = require('fs');
 
-var p = new Potem()
+var p = potem
   .then(function () {
     fs.exists('file.txt', p.pause());
     fs.readFile('file2.txt', p.pause(1, p.throwArg));
@@ -158,18 +160,22 @@ Returns the `resume()` function and pauses the execution. If you specify the `pa
 
 You can specify any number of argument converters. Argument converters do something with the arguments and after the conversion they pass the result to the next `.then()` function.
 
+### .stdPause(pauseCounter:number)
+
+Shorthand for `.pause(pauseCounter, p.throwArg);` for callbacks with standard (usually node) call signature.
+
 ### .passArg argument converter
 
 This argument converter does nothing. It's usefull if you want to do something with arguments that are passed on the later positions.
 
 ```js
-var Potem = require('potem');
+var potem = require('potem').potem;
 
 var func = function (callback) {
   callback(1, 2, 3);
 }
 
-var p = new Potem()
+var p = potem
   .then(function () {
     func(p.pause(1, p.passArg, p.skipArg);
   })
@@ -184,13 +190,13 @@ var p = new Potem()
 Removes the argument on the current position from the argument set
 
 ```js
-var Potem = require('potem');
+var potem = require('potem').potem;
 
 var func = function (callback) {
   callback(1, 2, 3);
 }
 
-var p = new Potem()
+var p = potem()
   .then(function () {
     func(p.pause(1, p.skipArg);
   })
@@ -206,13 +212,13 @@ Throws an error if a argument if truthy.
 
 ```js
 
-var Potem = require('potem');
+var potem = require('potem').potem;
 
 var func = function (callback) {
   callback(new Error('an error'), 'success');
 }
 
-var p = new Potem()
+var p = potem()
   .then(function () {
     func(p.pause(1, p.throwArg);
   })
@@ -227,7 +233,7 @@ var p = new Potem()
 This argument converter is especially useful when working with nodejs.
 
 ```js
-var p = new Potem()
+var p = potem()
   .then(function () {
     fs.writeFile('tmp.tmp', 'a', p.pause(1, p.throwArg));
     fs.writeFile('tmp2.tmp', 'b', p.pause(1, p.throwArg));
@@ -252,3 +258,15 @@ var p = new Potem()
   })
   .then(next);
 ```
+
+In nodejs it is very common that we have this callback signature:
+
+```ts
+interface INodejsCallback {
+    (err:Error, arg:any):void;
+}
+```
+
+So we usually would use `pause` like this: `p.pause(1, p.throwArg)`.
+For this reason there is a helper method added: `p.stdPause()` that
+is equivalent with `p.pause(1, p.throwArg)`.

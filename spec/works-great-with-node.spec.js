@@ -1,10 +1,10 @@
-var Potem = require('../build/commonjs/Potem.js');
+var potem = require('../build/commonjs/potem').potem;
 var fs = require('fs');
 
 describe('it-works-great-with-node.spec', function () {
 
   it('is a good idea for node style callbacks', function (next) {
-    var p = new Potem()
+    var p = potem()
       .then(function () {
         fs.writeFile('tmp.tmp', 'Test', p.pause(1, p.throwArg));
       })
@@ -13,7 +13,7 @@ describe('it-works-great-with-node.spec', function () {
       })
       .then(function (exists) {
         expect(exists).toBeTruthy();
-        fs.readFile('tmp.tmp', p.pause(1, p.throwArg));
+        fs.readFile('tmp.tmp', p.stdPause());
       })
       .then(function (file) {
         expect(file.toString()).toBe('Test');

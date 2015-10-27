@@ -1,94 +1,104 @@
-var Potem = (function () {
-    function Potem() {
-        this.pauseCounter = 0;
-        this.argsStack = [];
-        this.callStack = [];
-        this.run = this.run.bind(this);
+function potem(func) {
+    var p = function (func) {
+        addFunc(p, func);
+        setTimeout(run.bind(null, p));
+        return p;
+    };
+    p.pauseCounter = 0;
+    p.argsStack = [];
+    p.callStack = [];
+    Object.keys(potemPublicPrototype).forEach(function (key) { p[key] = potemPublicPrototype[key]; });
+    return func ? p(func) : p;
+}
+exports.potem = potem;
+function runFunc(p, fDef) {
+    try {
+        var lastResult;
+        if (typeof fDef.func === 'function') {
+            lastResult = fDef.func.apply(p, p.argsStack[p.argsStack.length - 1]);
+        }
+        else {
+            lastResult = p.argsStack.sort(function (a, b) { return a.pauseIndex - b.pauseIndex; });
+            for (var i = 0; i < fDef.func.length; i += 1) {
+                lastResult = fDef.func[i].apply(p, lastResult);
+            }
+        }
+        if (p.pauseCounter > 0 && lastResult !== undefined) {
+            p.argsStack.push(lastResult);
+        }
+        else if (lastResult && lastResult.then instanceof Function) {
+            p.argsStack = [];
+            lastResult.then(p.pause());
+        }
+        else {
+            p.argsStack = lastResult ? [[lastResult]] : [];
+        }
     }
-    Potem.prototype.throwArg = function (index, args) {
+    catch (e) {
+        p.stackError = e;
+        asyncThrowError(p);
+    }
+}
+function asyncThrowError(p) {
+    setTimeout(function () {
+        if (p.stackError &&
+            p.callStack.length === 0 &&
+            console &&
+            console.error instanceof Function) {
+            console.error('Error not catched', p.stackError, p.stackError.stack);
+        }
+    });
+}
+function addFunc(p, func, type) {
+    if (type === void 0) { type = 'then'; }
+    p.callStack.push({ type: type, func: func });
+}
+function run(p) {
+    if (p.pauseCounter > 0) {
+        return p;
+    }
+    var fDef = p.callStack.shift(); //tak first function
+    if (!fDef) {
+        return p;
+    }
+    if (fDef.type === 'then' && !p.stackError) {
+        runFunc(p, fDef);
+    }
+    else if (fDef.type === 'error' && p.stackError) {
+        p.argsStack = [[p.stackError]];
+        p.stackError = null;
+        runFunc(p, fDef);
+    }
+    else if (fDef.type === 'fin') {
+        if (p.stackError) {
+            p.argsStack = [[p.stackError]];
+            p.stackError = null;
+        }
+        runFunc(p, fDef);
+    }
+    setTimeout(run.bind(null, p));
+    return p;
+}
+var potemPublicPrototype;
+(function (potemPublicPrototype) {
+    function throwArg(index, args) {
         var arg = args[index];
         if (arg) {
             this.stackError = arg;
         }
         return this.skipArg(index, args);
-    };
-    Potem.prototype.passArg = function (index, args) {
+    }
+    potemPublicPrototype.throwArg = throwArg;
+    function passArg(index, args) {
         return 0;
-    };
-    Potem.prototype.skipArg = function (index, args) {
+    }
+    potemPublicPrototype.passArg = passArg;
+    function skipArg(index, args) {
         args.splice(index, 1);
         return 1;
-    };
-    Potem.prototype.runFunc = function (fDef) {
-        try {
-            var lastResult;
-            if (typeof fDef.func === 'function') {
-                lastResult = fDef.func.apply(this, this.argsStack[this.argsStack.length - 1]);
-            }
-            else {
-                lastResult = this.argsStack.sort(function (a, b) { return a.pauseIndex - b.pauseIndex; });
-                for (var i = 0; i < fDef.func.length; i += 1) {
-                    lastResult = fDef.func[i].apply(this, lastResult);
-                }
-            }
-            if (this.pauseCounter > 0 && lastResult !== undefined) {
-                this.argsStack.push(lastResult);
-            }
-            else if (lastResult && lastResult.then instanceof Function) {
-                this.argsStack = [];
-                lastResult.then(this.pause());
-            }
-            else {
-                this.argsStack = lastResult ? [[lastResult]] : [];
-            }
-        }
-        catch (e) {
-            this.stackError = e;
-            this.asyncThrowError();
-        }
-    };
-    Potem.prototype.asyncThrowError = function () {
-        var _this = this;
-        setTimeout(function () {
-            if (_this.stackError && _this.callStack.length === 0 && console && console.error instanceof Function) {
-                console.error('Error not catched', _this.stackError, _this.stackError.stack);
-            }
-        });
-    };
-    Potem.prototype.addFunc = function (func, type) {
-        if (type === void 0) { type = 'then'; }
-        this.callStack.push({ type: type, func: func });
-    };
-    Potem.prototype.run = function () {
-        if (this.pauseCounter > 0) {
-            return this;
-        }
-        var fDef = this.callStack.shift(); //tak first function
-        if (!fDef) {
-            return this;
-        }
-        if (fDef.type === 'then' && !this.stackError) {
-            this.runFunc(fDef);
-        }
-        else if (fDef.type === 'error' && this.stackError) {
-            this.argsStack = [[this.stackError]];
-            this.stackError = null;
-            this.runFunc(fDef);
-        }
-        else if (fDef.type === 'fin') {
-            if (this.stackError) {
-                this.argsStack = [[this.stackError]];
-                this.stackError = null;
-            }
-            this.runFunc(fDef);
-        }
-        setTimeout(this.run);
-        return this;
-    };
-    /********************************************************
-     //   * Public interface
-     //   ********************************************************/
-    Potem.prototype.pause = function (n) {
+    }
+    potemPublicPrototype.skipArg = skipArg;
+    function pause(n) {
         var _this = this;
         if (n === void 0) { n = 1; }
         var pauseArgs = [];
@@ -111,28 +121,34 @@ var Potem = (function () {
                 });
                 _this.argsStack.push(callbackArgs);
                 if (_this.pauseCounter === 0) {
-                    _this.run();
+                    run(_this);
                 }
             });
             return callbackArgs[0];
         };
-    };
-    Potem.prototype.then = function (func) {
-        this.addFunc(func);
-        setTimeout(this.run);
+    }
+    potemPublicPrototype.pause = pause;
+    function stdPause(n) {
+        if (n === void 0) { n = 1; }
+        return this.pause(n, this.throwArg);
+    }
+    potemPublicPrototype.stdPause = stdPause;
+    function then(func) {
+        addFunc(this, func);
+        setTimeout(run.bind(null, this));
         return this;
-    };
-    Potem.prototype.error = function (func) {
-        this.addFunc(func, 'error');
-        setTimeout(this.run);
+    }
+    potemPublicPrototype.then = then;
+    function error(func) {
+        addFunc(this, func, 'error');
+        setTimeout(run.bind(null, this));
         return this;
-    };
-    Potem.prototype.fin = function (func) {
-        this.addFunc(func, 'fin');
-        setTimeout(this.run);
+    }
+    potemPublicPrototype.error = error;
+    function fin(func) {
+        addFunc(this, func, 'fin');
+        setTimeout(run.bind(null, this));
         return this;
-    };
-    return Potem;
-})();
-module.exports = Potem;
-//# sourceMappingURL=Potem.js.map
+    }
+    potemPublicPrototype.fin = fin;
+})(potemPublicPrototype = exports.potemPublicPrototype || (exports.potemPublicPrototype = {}));

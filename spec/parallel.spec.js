@@ -1,11 +1,11 @@
-var Potem = require('../build/commonjs/Potem.js');
+var potem = require('../build/commonjs/potem').potem;
 var fs = require('fs');
 var domain = require('domain');
 
 describe('it-can-be-parallel.spec', function () {
 
   it('is parallel', function (next) {
-    var p = new Potem()
+    var p = potem()
       .then(function () {
         fs.writeFile('tmp.tmp', 'a', p.pause(1, p.throwArg));
         fs.writeFile('tmp2.tmp', 'b', p.pause(1, p.throwArg));
