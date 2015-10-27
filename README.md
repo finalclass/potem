@@ -1,4 +1,4 @@
-Potem
+potem
 =========
 
 ## Modern, very fast, lightweight, async, promise-like class
