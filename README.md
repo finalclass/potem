@@ -273,6 +273,10 @@ is equivalent with `p.pause(1, p.throwArg)`.
 
 ## Plans for a next version???
 
+**Warning** not implemented yet!
+
+Here is a draft of what is comming to be a part of v4.0:
+
 ```js
 var files = [];
 var seq = potem();
