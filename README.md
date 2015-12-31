@@ -270,3 +270,20 @@ interface INodejsCallback {
 So we usually would use `pause` like this: `p.pause(1, p.throwArg)`.
 For this reason there is a helper method added: `p.stdPause()` that
 is equivalent with `p.pause(1, p.throwArg)`.
+
+## Plans for a next version???
+
+```js
+var files = [];
+var seq = potem();
+seq(() => fs.readdir('./', seq.pause(1, throwArg));
+seq.each((dirItem, index) => {
+    var i = potem();
+    i(() => fs.stat('./' + dirItem, i.pause(1, i.throwArg)));
+    i.if((stat) => stat.isFile, (stat) => fs.readFile(stat.path, i.pause(1, i.throwArg)));
+    i((fileContent) => {
+        files.push(fileContent);
+    });
+    i.finally(seq.pause(1, seq.throwArg));
+});
+```
